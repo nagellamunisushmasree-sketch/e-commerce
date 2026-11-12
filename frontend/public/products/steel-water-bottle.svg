@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="250" x2="397" y1="110" y2="385" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9B955"/>
+      <stop offset=".45" stop-color="#FFF1C2"/>
+      <stop offset="1" stop-color="#D39A38"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="480" rx="38" fill="#FBF3DB"/>
+  <circle cx="506" cy="98" r="55" fill="#FFF" fill-opacity=".64"/>
+  <circle cx="112" cy="385" r="81" fill="#F0E4BC"/>
+  <ellipse cx="320" cy="391" rx="115" ry="17" fill="#DBC98F" fill-opacity=".6"/>
+  <path d="M283 93h74v37h-74z" fill="#8A6431"/>
+  <rect x="274" y="65" width="92" height="43" rx="12" fill="#A47A3D"/>
+  <rect x="244" y="119" width="152" height="259" rx="54" fill="url(#steel)"/>
+  <path d="M266 176c31-19 76-20 108 0v115c-32 19-77 20-108 0V176Z" fill="#F5D984" fill-opacity=".62"/>
+  <path d="M275 151h90" stroke="#FFF8DF" stroke-linecap="round" stroke-width="8"/>
+  <path d="M320 202c-22 24-34 40-34 54a34 34 0 1 0 68 0c0-14-12-30-34-54Z" fill="#FFF9E8" fill-opacity=".78"/>
+  <path d="M305 260c0 9 7 16 16 16" stroke="#D3A14B" stroke-linecap="round" stroke-width="6"/>
+</svg>
