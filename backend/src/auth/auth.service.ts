@@ -3,9 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
-  ForbiddenException,
 } from '@nestjs/common';
-import { timingSafeEqual } from 'node:crypto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
@@ -13,7 +11,6 @@ import { UserRole } from '../common/enums/user-role.enum';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { ClientLoginDto } from './dto/client-login.dto';
 import { ClientRegisterDto } from './dto/client-register.dto';
-import { AdminRegisterDto } from './dto/admin-register.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -45,46 +42,6 @@ export class AuthService {
 
     return {
       message: 'Client registered successfully',
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-      },
-    };
-  }
-
-  async registerAdmin(dto: AdminRegisterDto) {
-    const configuredCode = this.config.get<string>('ADMIN_REGISTRATION_KEY');
-    const providedCode = Buffer.from(dto.setupCode);
-    const expectedCode = configuredCode ? Buffer.from(configuredCode) : null;
-
-    if (
-      !expectedCode ||
-      providedCode.length !== expectedCode.length ||
-      !timingSafeEqual(providedCode, expectedCode)
-    ) {
-      throw new ForbiddenException('Admin registration code is invalid');
-    }
-
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: dto.username },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('Username already exists');
-    }
-
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = await this.prisma.user.create({
-      data: {
-        username: dto.username,
-        password: hashedPassword,
-        role: UserRole.ADMIN,
-      },
-    });
-
-    return {
-      message: 'Admin registered successfully',
       user: {
         id: user.id,
         username: user.username,
