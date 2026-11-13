@@ -87,12 +87,22 @@ $ npm run start:prod
 # unit tests
 $ npm run test
 
+# database-backed order approval test (requires a separate MySQL test database)
+$ npm run test:integration
+
 # e2e tests
 $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
 ```
+
+The order integration test requires `TEST_DATABASE_HOST`, `TEST_DATABASE_PORT`,
+`TEST_DATABASE_USER`, `TEST_DATABASE_PASSWORD`, and `TEST_DATABASE_NAME` to be
+set in the environment. The database name must contain a standalone `test`
+segment (for example, `ecommerce_test`); the test refuses to connect otherwise.
+Create the schema in that test database before running the test. Never point
+these settings at a development or production database.
 
 ## Deployment
 

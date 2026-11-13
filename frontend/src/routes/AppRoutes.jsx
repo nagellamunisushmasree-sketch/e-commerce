@@ -4,6 +4,7 @@ import AdminLogin from '../pages/admin/AdminLogin';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import ManageProducts from '../pages/admin/ManageProducts';
 import AdminSales from '../pages/admin/AdminSales';
+import AdminOrders from '../pages/admin/AdminOrders';
 
 import ClientLogin from '../pages/client/ClientLogin';
 import ClientRegister from '../pages/client/ClientRegister';
@@ -40,6 +41,7 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<ManageProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
           <Route path="sales" element={<AdminSales />} />
         </Route>
       </Route>

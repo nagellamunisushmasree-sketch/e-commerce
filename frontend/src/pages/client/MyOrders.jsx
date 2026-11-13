@@ -1,11 +1,15 @@
 import { Card, Table, Typography } from 'antd';
 import { useGetMyOrdersQuery } from '../../services/orderApi';
 import Loader from '../../components/common/Loader';
+import { getOrderStatusLabel } from '../../utils/orderStatus';
 
 const { Title } = Typography;
 
 function MyOrders() {
-  const { data, isLoading, error } = useGetMyOrdersQuery();
+  const { data, isLoading, error } = useGetMyOrdersQuery(undefined, {
+    pollingInterval: 10000,
+    skipPollingIfUnfocused: true,
+  });
 
   if (isLoading) return <Loader />;
   if (error) return <p>Unable to load your orders.</p>;
@@ -19,7 +23,11 @@ function MyOrders() {
       dataIndex: 'totalAmount',
       render: (amount) => `₹${amount}`,
     },
-    { title: 'Status', dataIndex: 'status' },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      render: getOrderStatusLabel,
+    },
     {
       title: 'Order Date',
       dataIndex: 'createdAt',

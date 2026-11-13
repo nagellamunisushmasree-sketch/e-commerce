@@ -1,6 +1,7 @@
 import { Card, Table, Typography } from 'antd';
 import { useGetAdminSalesQuery } from '../../services/orderApi';
 import Loader from '../../components/common/Loader';
+import { getOrderStatusLabel } from '../../utils/orderStatus';
 
 const { Title } = Typography;
 
@@ -21,7 +22,11 @@ function AdminSales() {
       dataIndex: 'unitPrice',
       render: (amount) => `₹${amount}`,
     },
-    { title: 'Status', dataIndex: ['order', 'status'] },
+    {
+      title: 'Status',
+      dataIndex: ['order', 'status'],
+      render: getOrderStatusLabel,
+    },
     {
       title: 'Date',
       dataIndex: ['order', 'createdAt'],

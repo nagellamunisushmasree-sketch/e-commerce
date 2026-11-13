@@ -2,6 +2,7 @@ import { Menu } from 'antd';
 import {
   DashboardOutlined,
   ShoppingOutlined,
+  FileDoneOutlined,
   BarChartOutlined,
   ShoppingCartOutlined,
   HeartOutlined,
@@ -16,6 +17,7 @@ function Sidebar({ type = 'admin' }) {
   const adminItems = [
     { key: '/admin/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: '/admin/products', icon: <ShoppingOutlined />, label: 'Manage Products' },
+    { key: '/admin/orders', icon: <FileDoneOutlined />, label: 'Orders' },
     { key: '/admin/sales', icon: <BarChartOutlined />, label: 'Sales' },
   ];
 

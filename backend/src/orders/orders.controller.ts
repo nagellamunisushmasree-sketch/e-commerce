@@ -3,6 +3,7 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
   Param,
   ParseIntPipe,
   Req,
@@ -29,6 +30,21 @@ export class OrdersController {
   @Get('my-orders')
   getMyOrders(@Req() req: any) {
     return this.ordersService.getMyOrders(req.user.userId);
+  }
+
+  @Get('admin')
+  @Roles(UserRole.ADMIN)
+  getAdminOrders(@Req() req: any) {
+    return this.ordersService.getAdminOrders(req.user.userId);
+  }
+
+  @Patch(':id/accept')
+  @Roles(UserRole.ADMIN)
+  acceptOrder(
+    @Req() req: any,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.ordersService.acceptOrder(req.user.userId, id);
   }
 
   @Get(':id')

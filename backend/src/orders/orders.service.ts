@@ -2,6 +2,8 @@
 import {
   Injectable,
   BadRequestException,
+  ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service';
@@ -92,6 +94,60 @@ export class OrdersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async getAdminOrders(adminId: number) {
+    return this.prisma.order.findMany({
+      where: {
+        items: { some: { adminId } },
+      },
+      include: {
+        user: { select: { username: true } },
+        items: {
+          where: { adminId },
+          include: { product: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async acceptOrder(adminId: number, orderId: number) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: orderId,
+        items: { some: { adminId } },
+      },
+      select: { id: true, status: true },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (order.status !== 'PENDING') {
+      throw new ConflictException('Only pending orders can be accepted');
+    }
+
+    const result = await this.prisma.order.updateMany({
+      where: {
+        id: orderId,
+        status: 'PENDING',
+        items: { some: { adminId } },
+      },
+      data: { status: 'PROCESSING' },
+    });
+
+    if (result.count !== 1) {
+      throw new ConflictException('Order is no longer pending');
+    }
+
+    return {
+      message: 'Order accepted',
+      order: await this.prisma.order.findUnique({
+        where: { id: orderId },
+      }),
+    };
   }
 
   async getOrderById(userId: number, id: number) {
