@@ -78,7 +78,7 @@ export class AuthService {
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid username or password');
     }
-
+ 
     // Every successful login (admin or client) is stored in SQL.
     await this.prisma.loginLog.create({
       data: {
