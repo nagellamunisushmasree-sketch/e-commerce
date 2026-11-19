@@ -3,12 +3,18 @@ import { api } from './api';
 export const productApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: () => '/products',
+      query: ({ search } = {}) => ({
+        url: '/products',
+        params: search ? { search } : undefined,
+      }),
       providesTags: ['Product'],
     }),
 
-    getMyProducts: builder.query({
-      query: () => '/products/mine',
+    getAdminProducts: builder.query({
+      query: ({ page = 1, pageSize = 10 } = {}) => ({
+        url: '/products/admin',
+        params: { page, pageSize },
+      }),
       providesTags: ['Product'],
     }),
 
@@ -55,7 +61,8 @@ export const productApi = api.injectEndpoints({
 
 export const {
   useGetProductsQuery,
-  useGetMyProductsQuery,
+  useLazyGetProductsQuery,
+  useGetAdminProductsQuery,
   useGetProductByIdQuery,
   useUploadProductImageMutation,
   useAddProductMutation,

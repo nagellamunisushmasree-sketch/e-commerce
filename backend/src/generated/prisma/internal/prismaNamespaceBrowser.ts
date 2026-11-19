@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Address: 'Address',
   LoginLog: 'LoginLog',
   Product: 'Product',
   CartItem: 'CartItem',
@@ -87,6 +88,21 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const AddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  recipientName: 'recipientName',
+  phone: 'phone',
+  streetAddress: 'streetAddress',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  createdAt: 'createdAt'
+} as const
+
+export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeof AddressScalarFieldEnum]
+
+
 export const LoginLogScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -100,9 +116,11 @@ export type LoginLogScalarFieldEnum = (typeof LoginLogScalarFieldEnum)[keyof typ
 export const ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  category: 'category',
   description: 'description',
   price: 'price',
   quantity: 'quantity',
+  isActive: 'isActive',
   imageUrl: 'imageUrl',
   adminId: 'adminId',
   createdAt: 'createdAt',
@@ -135,6 +153,14 @@ export const OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   totalAmount: 'totalAmount',
+  deliveryName: 'deliveryName',
+  deliveryPhone: 'deliveryPhone',
+  deliveryStreetAddress: 'deliveryStreetAddress',
+  deliveryCity: 'deliveryCity',
+  deliveryState: 'deliveryState',
+  deliveryPostalCode: 'deliveryPostalCode',
+  acceptedAt: 'acceptedAt',
+  deliveryDate: 'deliveryDate',
   status: 'status',
   createdAt: 'createdAt'
 } as const
@@ -148,7 +174,9 @@ export const OrderItemScalarFieldEnum = {
   productId: 'productId',
   adminId: 'adminId',
   quantity: 'quantity',
-  unitPrice: 'unitPrice'
+  unitPrice: 'unitPrice',
+  rating: 'rating',
+  review: 'review'
 } as const
 
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
@@ -170,6 +198,18 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const AddressOrderByRelevanceFieldEnum = {
+  recipientName: 'recipientName',
+  phone: 'phone',
+  streetAddress: 'streetAddress',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode'
+} as const
+
+export type AddressOrderByRelevanceFieldEnum = (typeof AddressOrderByRelevanceFieldEnum)[keyof typeof AddressOrderByRelevanceFieldEnum]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
@@ -180,9 +220,29 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 export const ProductOrderByRelevanceFieldEnum = {
   name: 'name',
+  category: 'category',
   description: 'description',
   imageUrl: 'imageUrl'
 } as const
 
 export type ProductOrderByRelevanceFieldEnum = (typeof ProductOrderByRelevanceFieldEnum)[keyof typeof ProductOrderByRelevanceFieldEnum]
+
+
+export const OrderOrderByRelevanceFieldEnum = {
+  deliveryName: 'deliveryName',
+  deliveryPhone: 'deliveryPhone',
+  deliveryStreetAddress: 'deliveryStreetAddress',
+  deliveryCity: 'deliveryCity',
+  deliveryState: 'deliveryState',
+  deliveryPostalCode: 'deliveryPostalCode'
+} as const
+
+export type OrderOrderByRelevanceFieldEnum = (typeof OrderOrderByRelevanceFieldEnum)[keyof typeof OrderOrderByRelevanceFieldEnum]
+
+
+export const OrderItemOrderByRelevanceFieldEnum = {
+  review: 'review'
+} as const
+
+export type OrderItemOrderByRelevanceFieldEnum = (typeof OrderItemOrderByRelevanceFieldEnum)[keyof typeof OrderItemOrderByRelevanceFieldEnum]
 

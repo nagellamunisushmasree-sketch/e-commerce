@@ -2,50 +2,29 @@ import { api } from './api';
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    adminLogin: builder.mutation({
+    login: builder.mutation({
       query: (credentials) => ({
-        url: '/auth/admin/login',
+        url: '/auth/login',
         method: 'POST',
         body: credentials,
       }),
 
-      adminRegister: builder.mutation({
-        query: (registration) => ({
-          url: '/auth/admin/register',
-          method: 'POST',
-          body: registration,
-        }),
-      }),
-
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
 
+          dispatch(api.util.resetApiState());
           localStorage.setItem('token', data.access_token);
           localStorage.setItem('role', data.role);
+          localStorage.setItem('username', data.username);
         } catch (error) {
-          console.error('Admin login failed:', error);
+          console.error('Login failed:', error);
         }
       },
     }),
 
-    clientLogin: builder.mutation({
-      query: (credentials) => ({
-        url: '/auth/client/login',
-        method: 'POST',
-        body: credentials,
-      }),
-
-      async onQueryStarted(arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-
-          localStorage.setItem('token', data.access_token);
-          localStorage.setItem('role', data.role);
-        } catch (error) {
-          console.error('Client login failed:', error);
-        }
-      },
+    getProfile: builder.query({
+      query: () => '/users/profile',
     }),
 
     clientRegister: builder.mutation({
@@ -59,8 +38,7 @@ export const authApi = api.injectEndpoints({
 });
 
 export const {
-  useAdminLoginMutation,
-  useAdminRegisterMutation,
-  useClientLoginMutation,
+  useLoginMutation,
+  useGetProfileQuery,
   useClientRegisterMutation,
 } = authApi;

@@ -13,6 +13,7 @@ import {
   useSaveItemMutation,
 } from '../../services/cartApi';
 import { useAuth } from '../../hooks/useAuth';
+import { getProductImageUrl } from '../../utils/productImageUrl';
 
 const productArt = [
   { match: /headphone|audio/i, icon: CustomerServiceOutlined, tone: 'lilac' },
@@ -35,12 +36,7 @@ function ProductCard({ product, showFullImage = false }) {
       tone: 'lilac',
     };
   const ProductIcon = art.icon;
-  const imageUrl = product.imageUrl?.startsWith('/uploads/')
-    ? new URL(
-        product.imageUrl,
-        import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-      ).href
-    : product.imageUrl;
+  const imageUrl = getProductImageUrl(product.imageUrl);
 
   const handleAddToCart = async () => {
     if (!isClient) {

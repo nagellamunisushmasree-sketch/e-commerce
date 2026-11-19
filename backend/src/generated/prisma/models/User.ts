@@ -219,6 +219,7 @@ export type UserWhereInput = {
   products?: Prisma.ProductListRelationFilter
   cartItems?: Prisma.CartItemListRelationFilter
   savedItems?: Prisma.SavedItemListRelationFilter
+  addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   salesItems?: Prisma.OrderItemListRelationFilter
   loginLogs?: Prisma.LoginLogListRelationFilter
@@ -233,6 +234,7 @@ export type UserOrderByWithRelationInput = {
   products?: Prisma.ProductOrderByRelationAggregateInput
   cartItems?: Prisma.CartItemOrderByRelationAggregateInput
   savedItems?: Prisma.SavedItemOrderByRelationAggregateInput
+  addresses?: Prisma.AddressOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
   salesItems?: Prisma.OrderItemOrderByRelationAggregateInput
   loginLogs?: Prisma.LoginLogOrderByRelationAggregateInput
@@ -251,6 +253,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   products?: Prisma.ProductListRelationFilter
   cartItems?: Prisma.CartItemListRelationFilter
   savedItems?: Prisma.SavedItemListRelationFilter
+  addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   salesItems?: Prisma.OrderItemListRelationFilter
   loginLogs?: Prisma.LoginLogListRelationFilter
@@ -288,6 +291,7 @@ export type UserCreateInput = {
   products?: Prisma.ProductCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
@@ -302,6 +306,7 @@ export type UserUncheckedCreateInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
@@ -315,6 +320,7 @@ export type UserUpdateInput = {
   products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
@@ -329,6 +335,7 @@ export type UserUncheckedUpdateInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
@@ -420,6 +427,20 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type UserCreateNestedOneWithoutAddressesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAddressesInput, Prisma.UserUncheckedCreateWithoutAddressesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAddressesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAddressesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAddressesInput, Prisma.UserUncheckedCreateWithoutAddressesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAddressesInput
+  upsert?: Prisma.UserUpsertWithoutAddressesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAddressesInput, Prisma.UserUpdateWithoutAddressesInput>, Prisma.UserUncheckedUpdateWithoutAddressesInput>
+}
+
 export type UserCreateNestedOneWithoutLoginLogsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutLoginLogsInput, Prisma.UserUncheckedCreateWithoutLoginLogsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutLoginLogsInput
@@ -504,6 +525,76 @@ export type UserUpdateOneRequiredWithoutSalesItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSalesItemsInput, Prisma.UserUpdateWithoutSalesItemsInput>, Prisma.UserUncheckedUpdateWithoutSalesItemsInput>
 }
 
+export type UserCreateWithoutAddressesInput = {
+  username: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  products?: Prisma.ProductCreateNestedManyWithoutAdminInput
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
+  savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
+  loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAddressesInput = {
+  id?: number
+  username: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
+  savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
+  loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAddressesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAddressesInput, Prisma.UserUncheckedCreateWithoutAddressesInput>
+}
+
+export type UserUpsertWithoutAddressesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAddressesInput, Prisma.UserUncheckedUpdateWithoutAddressesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAddressesInput, Prisma.UserUncheckedCreateWithoutAddressesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAddressesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAddressesInput, Prisma.UserUncheckedUpdateWithoutAddressesInput>
+}
+
+export type UserUpdateWithoutAddressesInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
+  cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
+  savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
+  loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAddressesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
+  savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
+  loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutLoginLogsInput = {
   username: string
   password: string
@@ -512,6 +603,7 @@ export type UserCreateWithoutLoginLogsInput = {
   products?: Prisma.ProductCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
 }
@@ -525,6 +617,7 @@ export type UserUncheckedCreateWithoutLoginLogsInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
 }
@@ -553,6 +646,7 @@ export type UserUpdateWithoutLoginLogsInput = {
   products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
 }
@@ -566,6 +660,7 @@ export type UserUncheckedUpdateWithoutLoginLogsInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
 }
@@ -577,6 +672,7 @@ export type UserCreateWithoutProductsInput = {
   createdAt?: Date | string
   cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
@@ -590,6 +686,7 @@ export type UserUncheckedCreateWithoutProductsInput = {
   createdAt?: Date | string
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
@@ -618,6 +715,7 @@ export type UserUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
@@ -631,6 +729,7 @@ export type UserUncheckedUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
@@ -643,6 +742,7 @@ export type UserCreateWithoutCartItemsInput = {
   createdAt?: Date | string
   products?: Prisma.ProductCreateNestedManyWithoutAdminInput
   savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
@@ -656,6 +756,7 @@ export type UserUncheckedCreateWithoutCartItemsInput = {
   createdAt?: Date | string
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
   savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
@@ -684,6 +785,7 @@ export type UserUpdateWithoutCartItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
   savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
@@ -697,6 +799,7 @@ export type UserUncheckedUpdateWithoutCartItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
   savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
@@ -709,6 +812,7 @@ export type UserCreateWithoutSavedItemsInput = {
   createdAt?: Date | string
   products?: Prisma.ProductCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
@@ -722,6 +826,7 @@ export type UserUncheckedCreateWithoutSavedItemsInput = {
   createdAt?: Date | string
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
@@ -750,6 +855,7 @@ export type UserUpdateWithoutSavedItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
@@ -763,6 +869,7 @@ export type UserUncheckedUpdateWithoutSavedItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
@@ -776,6 +883,7 @@ export type UserCreateWithoutOrdersInput = {
   products?: Prisma.ProductCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
 }
@@ -789,6 +897,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   salesItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAdminInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -817,6 +926,7 @@ export type UserUpdateWithoutOrdersInput = {
   products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
 }
@@ -830,6 +940,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   salesItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAdminNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -842,6 +953,7 @@ export type UserCreateWithoutSalesItemsInput = {
   products?: Prisma.ProductCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
 }
@@ -855,6 +967,7 @@ export type UserUncheckedCreateWithoutSalesItemsInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutAdminInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutUserInput
   savedItems?: Prisma.SavedItemUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -883,6 +996,7 @@ export type UserUpdateWithoutSalesItemsInput = {
   products?: Prisma.ProductUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
 }
@@ -896,6 +1010,7 @@ export type UserUncheckedUpdateWithoutSalesItemsInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutAdminNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutUserNestedInput
   savedItems?: Prisma.SavedItemUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -909,6 +1024,7 @@ export type UserCountOutputType = {
   products: number
   cartItems: number
   savedItems: number
+  addresses: number
   orders: number
   salesItems: number
   loginLogs: number
@@ -918,6 +1034,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   products?: boolean | UserCountOutputTypeCountProductsArgs
   cartItems?: boolean | UserCountOutputTypeCountCartItemsArgs
   savedItems?: boolean | UserCountOutputTypeCountSavedItemsArgs
+  addresses?: boolean | UserCountOutputTypeCountAddressesArgs
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   salesItems?: boolean | UserCountOutputTypeCountSalesItemsArgs
   loginLogs?: boolean | UserCountOutputTypeCountLoginLogsArgs
@@ -957,6 +1074,13 @@ export type UserCountOutputTypeCountSavedItemsArgs<ExtArgs extends runtime.Types
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountAddressesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AddressWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OrderWhereInput
 }
@@ -985,6 +1109,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   products?: boolean | Prisma.User$productsArgs<ExtArgs>
   cartItems?: boolean | Prisma.User$cartItemsArgs<ExtArgs>
   savedItems?: boolean | Prisma.User$savedItemsArgs<ExtArgs>
+  addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   salesItems?: boolean | Prisma.User$salesItemsArgs<ExtArgs>
   loginLogs?: boolean | Prisma.User$loginLogsArgs<ExtArgs>
@@ -1006,6 +1131,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   products?: boolean | Prisma.User$productsArgs<ExtArgs>
   cartItems?: boolean | Prisma.User$cartItemsArgs<ExtArgs>
   savedItems?: boolean | Prisma.User$savedItemsArgs<ExtArgs>
+  addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   salesItems?: boolean | Prisma.User$salesItemsArgs<ExtArgs>
   loginLogs?: boolean | Prisma.User$loginLogsArgs<ExtArgs>
@@ -1018,6 +1144,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     products: Prisma.$ProductPayload<ExtArgs>[]
     cartItems: Prisma.$CartItemPayload<ExtArgs>[]
     savedItems: Prisma.$SavedItemPayload<ExtArgs>[]
+    addresses: Prisma.$AddressPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
     salesItems: Prisma.$OrderItemPayload<ExtArgs>[]
     loginLogs: Prisma.$LoginLogPayload<ExtArgs>[]
@@ -1371,6 +1498,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   products<T extends Prisma.User$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cartItems<T extends Prisma.User$cartItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   savedItems<T extends Prisma.User$savedItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$savedItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  addresses<T extends Prisma.User$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   salesItems<T extends Prisma.User$salesItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$salesItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   loginLogs<T extends Prisma.User$loginLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$loginLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LoginLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1825,6 +1953,30 @@ export type User$savedItemsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.SavedItemScalarFieldEnum | Prisma.SavedItemScalarFieldEnum[]
+}
+
+/**
+ * User.addresses
+ */
+export type User$addressesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Address
+   */
+  select?: Prisma.AddressSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Address
+   */
+  omit?: Prisma.AddressOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AddressInclude<ExtArgs> | null
+  where?: Prisma.AddressWhereInput
+  orderBy?: Prisma.AddressOrderByWithRelationInput | Prisma.AddressOrderByWithRelationInput[]
+  cursor?: Prisma.AddressWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AddressScalarFieldEnum | Prisma.AddressScalarFieldEnum[]
 }
 
 /**

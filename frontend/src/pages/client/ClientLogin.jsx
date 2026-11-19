@@ -1,26 +1,30 @@
-import { Form, Input, Button, Card, Typography, message } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Typography,
+  message,
+} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { useClientLoginMutation } from '../../services/authApi';
+import { useLoginMutation } from '../../services/authApi';
 
 const { Title } = Typography;
 
 function ClientLogin() {
   const navigate = useNavigate();
-  const [clientLogin, { isLoading }] = useClientLoginMutation();
+  const [form] = Form.useForm();
+  const [login, { isLoading }] = useLoginMutation();
+  //isloading is used to indicates whether the API request is curenntly running
 
   const handleLogin = async (values) => {
     try {
-      const result = await clientLogin(values).unwrap();
-
-      if (result.role !== 'CLIENT') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        throw new Error('This account is not a client account');
-      }
-
-      message.success('Login successful');
-      navigate('/client/home');
+      const result = await login(values).unwrap();
+      //unwarp() it returns when it successfully response direclty or throws an error if the request fails 
+      const isAdmin = result.role === 'ADMIN';
+      message.success(`${isAdmin ? 'Admin' : 'Client'} login successful`);
+      navigate(isAdmin ? '/admin/dashboard' : '/client/home', { replace: true });
     } catch (error) {
       message.error(
         error?.data?.message || error.message || 'Login failed'
@@ -31,10 +35,11 @@ function ClientLogin() {
   return (
     <div className="login-container">
       <Card className="login-card">
-        <Title level={2}>Client Login</Title>
-        <p>Welcome to our store</p>
+        <Title level={2}>Login</Title>
+        <p>Sign in to continue to your account</p>
 
-        <Form layout="vertical" onFinish={handleLogin}>
+        <Form form={form} layout="vertical" onFinish={handleLogin}>
+          {/* //layout="vertical" displays the labels above input    */}
           <Form.Item
             label="Username"
             name="username"
@@ -45,7 +50,7 @@ function ClientLogin() {
 
           <Form.Item
             label="Password"
-            name="password"
+            name="password" 
             rules={[{ required: true, message: 'Enter password' }]}
           >
             <Input.Password
@@ -62,12 +67,12 @@ function ClientLogin() {
             size="large"
             loading={isLoading}
           >
-            Client Login
+            Login
           </Button>
         </Form>
 
         <p className="register-link">
-          Don't have an account? <Link to="/client/register">Register</Link>
+          Don&apos;t have an account? <Link to="/register">Register</Link>
         </p>
       </Card>
     </div>

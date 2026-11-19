@@ -10,8 +10,18 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+        /^http:\/\/\d+\.\d+\.\d+\.\d+(?::\d+)?$/,
+      ];
+      const isAllowed = !origin || allowedOrigins.some((pattern) => pattern.test(origin));
+
+      callback(null, isAllowed);
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   const uploadsDirectory = join(process.cwd(), 'uploads');

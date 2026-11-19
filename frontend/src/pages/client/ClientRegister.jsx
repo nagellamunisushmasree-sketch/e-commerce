@@ -13,7 +13,7 @@ function ClientRegister() {
       await registerClient(values).unwrap();
 
       message.success('Registration successful. Please login.');
-      navigate('/client');
+      navigate('/login');
     } catch (error) {
       message.error(error?.data?.message || 'Registration failed');
     }
@@ -55,7 +55,7 @@ function ClientRegister() {
         </Form>
 
         <p className="register-link">
-          Already registered? <Link to="/client">Login</Link>
+          Already registered? <Link to="/login">Login</Link>
         </p>
       </Card>
     </div>

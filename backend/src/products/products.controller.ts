@@ -6,8 +6,10 @@ import {
   Patch,
   Delete,
   Body,
+  DefaultValuePipe,
   Param,
   ParseIntPipe,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -15,10 +17,15 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+//handle the  file uploads
 import { diskStorage } from 'multer';
+//stores the uploaded files on the server
 import { mkdirSync } from 'node:fs';
+//create a folder
 import { randomUUID } from 'node:crypto';
+//unique id 
 import { join } from 'node:path';
+//creates a vaild path
 
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -31,9 +38,10 @@ import { UserRole } from '../common/enums/user-role.enum';
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
-
+  //private means a property or method can be accessed only inside the class 
   @Post('upload-image')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  //check the authentication and authorizations
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -81,21 +89,42 @@ export class ProductsController {
   }
 
   @Get()
-  getAllProducts() {
-    return this.productsService.getAllProducts();
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.CLIENT)
+  getAllProducts(@Query('search') search?: string) {
+    return this.productsService.getAllProducts(search);
   }
 
-  // Must be declared before ':id' so "mine" is not parsed as an id.
-  @Get('mine')
+  // Must be declared before ':id' so "admin" is not parsed as an id.
+  @Get('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  getMyProducts(@Req() req: any) {
-    return this.productsService.getProductsByAdmin(req.user.userId);
+  getAdminProducts(
+    @Req() req: any,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+  ) {
+    if (page < 1) {
+      throw new BadRequestException('Page must be greater than 0');
+    }
+
+    if (![10, 20, 50, 100].includes(pageSize)) {
+      throw new BadRequestException('Page size must be 10, 20, 50, or 100');
+    }
+
+    return this.productsService.getProductsByAdmin(
+      req.user.userId,
+      page,
+      pageSize,
+    );
   }
 
   @Get(':id')
-  getProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.getProductById(id);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.CLIENT)
+  getProduct(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    //parseintpipe is id into a number
+    return this.productsService.getProductById(id, req.user.userId);
   }
 
   @Post()

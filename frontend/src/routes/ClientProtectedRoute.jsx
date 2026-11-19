@@ -5,7 +5,7 @@ function ClientProtectedRoute() {
   const role = localStorage.getItem('role');
 
   if (!token || role !== 'CLIENT') {
-    return <Navigate to="/client" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;

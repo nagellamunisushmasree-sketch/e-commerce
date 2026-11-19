@@ -22,6 +22,11 @@ export class SalesService {
             userId: true,
             status: true,
             createdAt: true,
+            user: {
+              select: {
+                username: true,
+              },
+            },
           },
         },
       },

@@ -3,17 +3,48 @@ import {
   Injectable,
   BadRequestException,
   ConflictException,
+  Logger,
   NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
 } from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class OrdersService {
+export class OrdersService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(OrdersService.name);
+  private deliveryStatusTimer: NodeJS.Timeout | undefined;
+
   constructor(private prisma: PrismaService) {}
 
-  async checkout(userId: number) {
+  onModuleInit() {
+    this.deliveryStatusTimer = setInterval(() => {
+      this.markOrdersDeliveredIfDue({}).catch((error: unknown) => {
+        this.logger.error(
+          'Unable to update orders due for delivery',
+          error instanceof Error ? error.stack : String(error),
+        );
+      });
+    }, 60_000);
+  }
+
+  onModuleDestroy() {
+    if (this.deliveryStatusTimer) {
+      clearInterval(this.deliveryStatusTimer);
+    }
+  }
+
+  async checkout(userId: number, addressId: number) {
     return this.prisma.$transaction(async (tx) => {
+      const address = await tx.address.findFirst({
+        where: { id: addressId, userId },
+      });
+
+      if (!address) {
+        throw new NotFoundException('Delivery address not found');
+      }
+
       const cartItems = await tx.cartItem.findMany({
         where: { userId },
         include: { product: true },
@@ -26,6 +57,12 @@ export class OrdersService {
       let total = 0;
 
       const orderItems = cartItems.map((item) => {
+        if (!item.product.isActive) {
+          throw new BadRequestException(
+            `${item.product.name} is no longer available`,
+          );
+        }
+
         if (item.quantity > item.product.quantity) {
           throw new BadRequestException(
             `Insufficient stock for ${item.product.name}`,
@@ -48,6 +85,12 @@ export class OrdersService {
         data: {
           userId,
           totalAmount: total,
+          deliveryName: address.recipientName,
+          deliveryPhone: address.phone,
+          deliveryStreetAddress: address.streetAddress,
+          deliveryCity: address.city,
+          deliveryState: address.state,
+          deliveryPostalCode: address.postalCode,
           items: {
             create: orderItems,
           },
@@ -59,6 +102,7 @@ export class OrdersService {
         const updated = await tx.product.updateMany({
           where: {
             id: item.productId,
+            isActive: true,
             quantity: { gte: item.quantity },
           },
           data: {
@@ -85,6 +129,8 @@ export class OrdersService {
   }
 
   async getMyOrders(userId: number) {
+    await this.markOrdersDeliveredIfDue({ userId });
+
     return this.prisma.order.findMany({
       where: { userId },
       include: {
@@ -97,6 +143,8 @@ export class OrdersService {
   }
 
   async getAdminOrders(adminId: number) {
+    await this.markOrdersDeliveredIfDue({ adminId });
+
     return this.prisma.order.findMany({
       where: {
         items: { some: { adminId } },
@@ -112,7 +160,22 @@ export class OrdersService {
     });
   }
 
-  async acceptOrder(adminId: number, orderId: number) {
+  async acceptOrder(
+    adminId: number,
+    orderId: number,
+    deliveryDate: string,
+  ) {
+    const parsedDeliveryDate = new Date(`${deliveryDate}T00:00:00.000Z`);
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    if (
+      Number.isNaN(parsedDeliveryDate.getTime()) ||
+      parsedDeliveryDate < today
+    ) {
+      throw new BadRequestException('Delivery date must be today or later');
+    }
+
     const order = await this.prisma.order.findFirst({
       where: {
         id: orderId,
@@ -135,7 +198,11 @@ export class OrdersService {
         status: 'PENDING',
         items: { some: { adminId } },
       },
-      data: { status: 'PROCESSING' },
+      data: {
+        status: 'PROCESSING',
+        acceptedAt: new Date(),
+        deliveryDate: parsedDeliveryDate,
+      },
     });
 
     if (result.count !== 1) {
@@ -151,6 +218,8 @@ export class OrdersService {
   }
 
   async getOrderById(userId: number, id: number) {
+    await this.markOrdersDeliveredIfDue({ userId });
+
     return this.prisma.order.findFirst({
       where: { id, userId },
       include: {
@@ -158,6 +227,66 @@ export class OrdersService {
           include: { product: true },
         },
       },
+    });
+  }
+
+  private async markOrdersDeliveredIfDue({
+    userId,
+    adminId,
+  }: {
+    userId?: number;
+    adminId?: number;
+  }) {
+    const tomorrow = new Date();
+    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    await this.prisma.order.updateMany({
+      where: {
+        status: { in: ['PROCESSING', 'SHIPPED'] },
+        deliveryDate: { lt: tomorrow },
+        ...(userId !== undefined ? { userId } : {}),
+        ...(adminId !== undefined ? { items: { some: { adminId } } } : {}),
+      },
+      data: { status: 'DELIVERED' },
+    });
+  }
+
+  async rateOrderItem(
+    userId: number,
+    orderId: number,
+    orderItemId: number,
+    rating: number,
+    review: string,
+  ) {
+    await this.markOrdersDeliveredIfDue({ userId });
+
+    const orderItem = await this.prisma.orderItem.findFirst({
+      where: {
+        id: orderItemId,
+        orderId,
+        order: { is: { userId } },
+      },
+      select: { id: true, order: { select: { status: true } } },
+    });
+
+    if (!orderItem) {
+      throw new NotFoundException('Order item not found');
+    }
+
+    if (orderItem.order.status !== 'DELIVERED') {
+      throw new ConflictException('You can rate this product after delivery');
+    }
+
+    const trimmedReview = review.trim();
+    if (!trimmedReview) {
+      throw new BadRequestException('Review cannot be empty');
+    }
+
+    return this.prisma.orderItem.update({
+      where: { id: orderItemId },
+      data: { rating, review: trimmedReview },
+      select: { id: true, rating: true, review: true },
     });
   }
 }

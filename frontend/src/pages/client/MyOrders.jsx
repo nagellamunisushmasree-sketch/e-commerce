@@ -2,22 +2,42 @@ import { Card, Table, Typography } from 'antd';
 import { useGetMyOrdersQuery } from '../../services/orderApi';
 import Loader from '../../components/common/Loader';
 import { getOrderStatusLabel } from '../../utils/orderStatus';
+import OrderProductLink from '../../components/client/OrderProductLink';
 
 const { Title } = Typography;
+
+function formatDeliveryDate(value) {
+  if (!value) return null;
+
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString();
+}
 
 function MyOrders() {
   const { data, isLoading, error } = useGetMyOrdersQuery(undefined, {
     pollingInterval: 10000,
     skipPollingIfUnfocused: true,
   });
-
   if (isLoading) return <Loader />;
   if (error) return <p>Unable to load your orders.</p>;
 
   const orders = Array.isArray(data) ? data : data?.orders || [];
 
   const columns = [
-    { title: 'Order ID', dataIndex: 'id' },
+    {
+      title: 'Products',
+      render: (_, order) => (
+        <div className="order-product-list">
+          {(order.items || []).map((item) =>
+            <OrderProductLink
+              key={item.id}
+              product={item.product}
+              to={`/client/orders/${order.id}/track`}
+            />,
+          )}
+        </div>
+      ),
+    },
     {
       title: 'Amount',
       dataIndex: 'totalAmount',
@@ -31,7 +51,12 @@ function MyOrders() {
     {
       title: 'Order Date',
       dataIndex: 'createdAt',
-      render: (date) => date ? new Date(date).toLocaleDateString() : '-',
+      render: (date) => (date ? new Date(date).toLocaleDateString() : '-'),
+    },
+    {
+      title: 'Expected Delivery',
+      dataIndex: 'deliveryDate',
+      render: (date) => formatDeliveryDate(date) || 'Not set',
     },
   ];
 
@@ -42,25 +67,6 @@ function MyOrders() {
         rowKey="id"
         columns={columns}
         dataSource={orders}
-        expandable={{
-          expandedRowRender: (order) => (
-            <Table
-              size="small"
-              pagination={false}
-              rowKey="id"
-              dataSource={order.items || []}
-              columns={[
-                { title: 'Product', dataIndex: ['product', 'name'] },
-                { title: 'Quantity', dataIndex: 'quantity' },
-                {
-                  title: 'Unit Price',
-                  dataIndex: 'unitPrice',
-                  render: (amount) => `₹${amount}`,
-                },
-              ]}
-            />
-          ),
-        }}
       />
     </Card>
   );

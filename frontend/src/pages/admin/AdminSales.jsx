@@ -15,6 +15,7 @@ function AdminSales() {
 
   const columns = [
     { title: 'Order ID', dataIndex: ['order', 'id'] },
+    { title: 'Client', dataIndex: ['order', 'user', 'username'] },
     { title: 'Product', dataIndex: ['product', 'name'] },
     { title: 'Quantity', dataIndex: 'quantity' },
     {
@@ -37,7 +38,16 @@ function AdminSales() {
   return (
     <Card>
       <Title level={2}>Admin Sales</Title>
-      <Table rowKey="id" columns={columns} dataSource={sales} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={sales}
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: ['10', '20', '50'],
+          showSizeChanger: true,
+        }}
+      />
     </Card>
   );
 }

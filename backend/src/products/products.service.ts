@@ -13,31 +13,94 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async getAllProducts() {
+  async getAllProducts(search?: string) {
+    const searchTerm = search?.trim();
+
     return this.prisma.product.findMany({
-      where: { quantity: { gt: 0 } },
+      where: {
+        isActive: true,
+        quantity: { gt: 0 },
+        ...(searchTerm
+          ? {
+              name: { contains: searchTerm },
+            }
+          : {}),
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
 
   // Admin's own products, including out-of-stock ones.
-  async getProductsByAdmin(adminId: number) {
-    return this.prisma.product.findMany({
-      where: { adminId },
-      orderBy: { createdAt: 'desc' },
-    });
+  async getProductsByAdmin(adminId: number, page: number, pageSize: number) {
+    const where = { adminId, isActive: true };
+    const [products, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return { products, total, page, pageSize };
   }
 
-  async getProductById(id: number) {
+  async getProductById(id: number, userId: number) {
     const product = await this.prisma.product.findUnique({
       where: { id },
+      include: {
+        orderItems: {
+          where: {
+            rating: { not: null },
+            order: { is: { status: 'DELIVERED' } },
+          },
+          select: {
+            id: true,
+            orderId: true,
+            rating: true,
+            review: true,
+            order: {
+              select: {
+                userId: true,
+                createdAt: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    if (!product) {
+    if (!product || !product.isActive) {
       throw new NotFoundException('Product not found');
     }
 
-    return product;
+    const { orderItems, ...productDetails } = product;
+    const reviews = orderItems.flatMap((item) =>
+      item.rating === null
+        ? []
+        : [
+            {
+              rating: item.rating,
+              review: item.review,
+              createdAt: item.order.createdAt,
+              canEdit: item.order.userId === userId,
+              ...(item.order.userId === userId
+                ? { orderId: item.orderId, orderItemId: item.id }
+                : {}),
+            },
+          ],
+    );
+    const averageRating = reviews.length
+      ? reviews.reduce((total, item) => total + item.rating, 0) / reviews.length
+      : 0;
+
+    return {
+      ...productDetails,
+      averageRating,
+      ratingCount: reviews.length,
+      reviews,
+    };
   }
 
   async createProduct(adminId: number, dto: CreateProductDto) {
@@ -59,7 +122,7 @@ export class ProductsService {
       where: { id },
     });
 
-    if (!product) {
+    if (!product || !product.isActive) {
       throw new NotFoundException('Product not found');
     }
 
@@ -86,8 +149,18 @@ export class ProductsService {
       throw new ForbiddenException('You cannot delete this product');
     }
 
-    return this.prisma.product.delete({
-      where: { id },
+    if (!product.isActive) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.cartItem.deleteMany({ where: { productId: id } });
+      await tx.savedItem.deleteMany({ where: { productId: id } });
+
+      return tx.product.update({
+        where: { id },
+        data: { isActive: false },
+      });
     });
   }
 }

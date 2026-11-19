@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Card, Modal, Table, message } from 'antd';
 import ProductForm from '../../components/admin/ProductFrom';
 import {
-  useGetMyProductsQuery,
+  useGetAdminProductsQuery,
   useAddProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
@@ -12,14 +12,21 @@ import Loader from '../../components/common/Loader';
 function ManageProducts() {
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 20 });
 
   // Only this admin's products (including out-of-stock ones).
-  const { data = [], isLoading } = useGetMyProductsQuery();
+  const { data, isLoading, isFetching } = useGetAdminProductsQuery({
+    page: pagination.current,
+    pageSize: pagination.pageSize,
+  });
   const [addProduct, { isLoading: adding }] = useAddProductMutation();
   const [updateProduct, { isLoading: updating }] = useUpdateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
 
   const products = Array.isArray(data) ? data : data?.products || [];
+  const totalProducts = Array.isArray(data)
+    ? products.length
+    : data?.total || 0;
 
   const handleSave = async (values) => {
     try {
@@ -53,6 +60,7 @@ function ManageProducts() {
 
   const columns = [
     { title: 'Name', dataIndex: 'name' },
+    { title: 'Category', dataIndex: 'category' },
     { title: 'Price', dataIndex: 'price', render: (price) => `₹${price}` },
     { title: 'Quantity', dataIndex: 'quantity' },
     {
@@ -94,7 +102,22 @@ function ManageProducts() {
         rowKey="id"
         columns={columns}
         dataSource={products}
+        loading={isFetching}
         style={{ marginTop: 20 }}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: totalProducts,
+          pageSizeOptions: ['10', '20', '50', '100'],
+          showSizeChanger: true,
+          onChange: (page, size) => {
+            setPagination((prev) => ({
+              // Changing the page size goes back to page 1.
+              current: Number(size) !== prev.pageSize ? 1 : page,
+              pageSize: Number(size),
+            }));
+          },
+        }}
       />
 
       <Modal

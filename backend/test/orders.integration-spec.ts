@@ -18,6 +18,7 @@ describe('Order acceptance (database integration)', () => {
   let clientId: number | undefined;
   let productId: number | undefined;
   let orderId: number | undefined;
+  let orderItemId: number | undefined;
 
   beforeAll(async () => {
     const databaseName = requiredTestSetting('TEST_DATABASE_NAME');
@@ -83,8 +84,10 @@ describe('Order acceptance (database integration)', () => {
           ],
         },
       },
+      include: { items: true },
     });
     orderId = order.id;
+    orderItemId = order.items[0]?.id;
   });
 
   afterAll(async () => {
@@ -113,11 +116,90 @@ describe('Order acceptance (database integration)', () => {
       throw new Error('Integration test records were not created');
     }
 
-    await service.acceptOrder(adminId, orderId);
+    const deliveryDate = new Date(Date.now() + 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
+    await service.acceptOrder(adminId, orderId, deliveryDate);
 
     const savedOrder = await db.order.findUnique({
       where: { id: orderId },
     });
     expect(savedOrder?.status).toBe('PROCESSING');
+    expect(savedOrder?.acceptedAt).toBeInstanceOf(Date);
+    expect(savedOrder?.deliveryDate?.toISOString().slice(0, 10)).toBe(
+      deliveryDate,
+    );
+  });
+
+  it('persists ratings only for the owning client', async () => {
+    const db = prisma;
+    if (
+      !db ||
+      clientId === undefined ||
+      adminId === undefined ||
+      orderId === undefined ||
+      orderItemId === undefined
+    ) {
+      throw new Error('Integration test records were not created');
+    }
+
+    await expect(
+      service.rateOrderItem(
+        clientId,
+        orderId,
+        orderItemId,
+        5,
+        'The product arrived as expected.',
+      ),
+    ).rejects.toThrow('You can rate this product after delivery');
+
+    await db.order.update({
+      where: { id: orderId },
+      data: { status: 'DELIVERED' },
+    });
+
+    const rating = await service.rateOrderItem(
+      clientId,
+      orderId,
+      orderItemId,
+      5,
+      'The product arrived as expected.',
+    );
+    expect(rating.rating).toBe(5);
+    expect(rating.review).toBe('The product arrived as expected.');
+    await expect(
+      service.rateOrderItem(
+        adminId,
+        orderId,
+        orderItemId,
+        4,
+        'Not the owner.',
+      ),
+    ).rejects.toThrow('Order item not found');
+
+    const savedItem = await db.orderItem.findUnique({
+      where: { id: orderItemId },
+      select: { rating: true, review: true },
+    });
+    expect(savedItem?.rating).toBe(5);
+    expect(savedItem?.review).toBe('The product arrived as expected.');
+  });
+
+  it('marks an accepted order delivered when its delivery date arrives', async () => {
+    const db = prisma;
+    if (!db || clientId === undefined || orderId === undefined) {
+      throw new Error('Integration test records were not created');
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    await db.order.update({
+      where: { id: orderId },
+      data: { deliveryDate: today, status: 'PROCESSING' },
+    });
+
+    const orders = await service.getMyOrders(clientId);
+    const dueOrder = orders.find((order) => order.id === orderId);
+    expect(dueOrder?.status).toBe('DELIVERED');
   });
 });

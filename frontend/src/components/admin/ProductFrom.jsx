@@ -11,8 +11,8 @@ function ProductForm({ onSubmit, loading = false, initialValues = {} }) {
     let imageUrl = initialValues.imageUrl;
     const imageFile = fileList[0]?.originFileObj;
 
-    if (imageFile) {
-      const formData = new FormData();
+    if (imageFile) {//checks the user selected a new image
+      const formData = new FormData();//formdata object
       formData.append('file', imageFile);
 
       try {
@@ -29,7 +29,7 @@ function ProductForm({ onSubmit, loading = false, initialValues = {} }) {
   return (
     <Form
       layout="vertical"
-      initialValues={initialValues}
+      initialValues={initialValues}//it fills the values in the existing product details
       onFinish={handleSubmit}
     >
       <Form.Item
@@ -38,6 +38,14 @@ function ProductForm({ onSubmit, loading = false, initialValues = {} }) {
         rules={[{ required: true, message: 'Enter product name' }]}
       >
         <Input placeholder="Enter product name" />
+      </Form.Item>
+
+      <Form.Item
+        label="Category"
+        name="category"
+        rules={[{ required: true, message: 'Enter product category' }]}
+      >
+        <Input placeholder="e.g. Beauty, Fashion, Home" />
       </Form.Item>
 
       <Form.Item label="Description" name="description">

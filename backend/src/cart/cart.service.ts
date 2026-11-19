@@ -24,7 +24,7 @@ export class CartService {
       where: { id: dto.productId },
     });
 
-    if (!product) {
+    if (!product || !product.isActive) {
       throw new NotFoundException('Product not found');
     }
 
@@ -71,6 +71,10 @@ export class CartService {
 
     if (!item) {
       throw new NotFoundException('Cart item not found');
+    }
+
+    if (!item.product.isActive) {
+      throw new NotFoundException('Product not found');
     }
 
     if (quantity > item.product.quantity) {
